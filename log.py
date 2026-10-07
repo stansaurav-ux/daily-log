@@ -26,8 +26,20 @@ def list_notes():
         print(row[0], "|", row[2], "|", row[1])
     conn.close()
 
-if len(sys.argv) > 1:
+def search_notes(keyword):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("SELECT id,note,created_at FROM notes WHERE note LIKE ?", ("%" + keyword + "%",))
+    rows = cur.fetchall()
+    for row in rows:
+        print(row[0], "|", row[2], "|", row[1])
+    conn.close()
+
+if len(sys.argv) > 2 and sys.argv[1] == "search":
+    search_notes(" ".join(sys.argv[2:]))
+elif len(sys.argv) > 1:
     add_note(" ".join(sys.argv[1:]))
     print("saved!")
 else:
     list_notes()
+
